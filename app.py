@@ -1,51 +1,39 @@
-from fastapi import FastAPI, Depends, HttpException, UploadFile, File
-from google import genai
+from fastapi import FastAPI, Request, HTTPException, Depends
 import os
-import tempfile
 from dotenv import load_dotenv
-import models
-from database import engine, SessionLocal
-from sqlalchemy.orm import Session
+from supabase import Client, create_client
+from pydantic import BaseModel, AwareDatetime
+from routers import auth
+from dependencies import get_current_user_id
+
+
+class Item(BaseModel):
+    item_id: int
+    user_id: str
+    created_at: AwareDatetime
+    summary: str
+    link: str
+
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = FastAPI()
-models.Base.metadata.create_all(bind=engine)
+
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_SECRET_KEY")
+supabase_bucket = os.getenv("SUPABASE_BUCKET")
+supabase_jwt_key = os.getenv("SUPABASE_JWT_KEY")
+
+supabase: Client = create_client(supabase_url, supabase_key)
+app.include_router(auth.router)
 
 
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
-@app.get("/search", status_code=200)
-def search(db: Session = Depends(get_db)):
-    return db.query(models.Item).all()
-
-
-@app.post("/upload", status_code=201)
-async def upload(file: UploadFile = File(...)):
-    suffix = os.path.splitext(file.filename)[1]
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-        tmp.write(await file.read())
-        tmp_path = tmp.name
-    uploaded_file = client.files.upload(file=tmp_path)
-    summary = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=["Generate a 20 word summary for the file.", uploaded_file]
+@app.get("/search", response_model=list[Item], status_code=200)
+async def get_data(user_id: str = Depends(get_current_user_id)):
+    response = (
+        supabase
+        .table('items')
+        .select('*')
+        .eq('user_id', user_id)
+        .execute()
     )
-
-
-@app.delete("/delete/{id}", status_code=204)
-def delete(id: int, db: Session = Depends(get_db)):
-    row = db.get(models.Item, id)
-    if row is None:
-        raise HttpException(
-            status_code=404,
-            detail="id does not exits."
-        )
-    db.delete(row)
-    db.commit()
+    return response.data
