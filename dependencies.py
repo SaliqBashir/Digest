@@ -3,6 +3,7 @@ import jwt
 from jwt import PyJWKClient
 from fastapi import Header, HTTPException
 from dotenv import load_dotenv
+import httpx
 
 load_dotenv()
 
@@ -32,3 +33,19 @@ def get_current_user_id(authorization: str = Header(...)) -> str:
         raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
 
     return payload["sub"]
+
+
+
+async def summarize(text: str):
+    async with httpx.AsyncClient(timeout=120) as client:
+        resp = await client.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "qwen2.5:7b",
+                "prompt": f"Summarize the following document in 3-4 sentences:\n\n{text}",
+                "stream": False
+            }
+        )
+        resp.raise_for_status()
+        return resp.json()["response"]
+
