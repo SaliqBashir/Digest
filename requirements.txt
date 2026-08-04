@@ -1,6 +1,7 @@
 fastapi>=0.110.0
 uvicorn>=0.28.0
 python-dotenv>=1.0.1
-supabase
-httpx
-time
+supabase>=2.5.0
+httpx>=0.27.0
+python-multipart
+re

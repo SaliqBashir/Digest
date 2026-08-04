@@ -44,4 +44,4 @@ def login(creds: Credentials):
             "user_id": result.user.id,
         }
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=401, detail=f"Invalid credentials: {e}")

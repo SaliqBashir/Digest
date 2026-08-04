@@ -4,6 +4,7 @@ from jwt import PyJWKClient
 from fastapi import Header, HTTPException
 from dotenv import load_dotenv
 import httpx
+import re
 
 load_dotenv()
 
@@ -35,17 +36,47 @@ def get_current_user_id(authorization: str = Header(...)) -> str:
     return payload["sub"]
 
 
-
 async def summarize(text: str):
     async with httpx.AsyncClient(timeout=120) as client:
         resp = await client.post(
             "http://localhost:11434/api/generate",
             json={
                 "model": "qwen2.5:7b",
-                "prompt": f"Summarize the following document in 3-4 sentences:\n\n{text}",
+                "prompt": f"Summarize the following document in 20 words:\n\n{text}",
                 "stream": False
             }
         )
         resp.raise_for_status()
         return resp.json()["response"]
 
+
+async def matching(text: str, items: list[dict]) -> int | None:
+    if not items:
+        return None
+    items_list = "\n".join(
+        f"{item['item_id']}: {item['summary']}" for item in items
+    )
+    prompt = (
+        "You are given a search query and a list of document summaries, each with an ID.\n"
+        "Return ONLY the item_id number of the summary that best matches the query. "
+        "Do not explain, do not add any other text — just the number.\n\n"
+        f"Query: {text}\n\n"
+        f"Items:\n{items_list}\n\n"
+        "item_id:"
+    )
+    async with httpx.AsyncClient(timeout=120) as client:
+        resp = await client.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "qwen2.5:7b",
+                "prompt": prompt,
+                "stream": False
+            }
+        )
+        resp.raise_for_status()
+        raw_output = resp.json()["response"].strip()
+    match = re.search(r'\d+', raw_output)
+    if not match:
+        return None
+
+    return int(match.group())

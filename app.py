@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from supabase import Client, create_client
 from pydantic import BaseModel, AwareDatetime
 from routers import auth
-from dependencies import get_current_user_id, summarize
+from dependencies import get_current_user_id, summarize, matching
 import time
 
 
@@ -22,14 +22,13 @@ app = FastAPI()
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_SECRET_KEY")
 supabase_bucket = os.getenv("SUPABASE_BUCKET")
-supabase_jwt_key = os.getenv("SUPABASE_JWT_KEY")
 
 supabase: Client = create_client(supabase_url, supabase_key)
 app.include_router(auth.router)
 
 
 @app.get("/search", response_model=list[Item], status_code=200)
-def get_data(user_id: str = Depends(get_current_user_id)):
+def get_items(user_id: str = Depends(get_current_user_id)):
     response = (
         supabase
         .table('items')
@@ -40,17 +39,41 @@ def get_data(user_id: str = Depends(get_current_user_id)):
     return response.data
 
 
-@app.get("/search/{id}", response_model=Item, status_code=200)
-def get_data(id: int, user_id: str = Depends(get_current_user_id)):
+@app.get("/search/{item_id}", response_model=Item, status_code=200)
+def get_item(item_id: int, user_id: str = Depends(get_current_user_id)):
     response = (
         supabase
         .table('items')
         .select('*')
         .eq('user_id', user_id)
-        .eq('item_id', id)
-        .excecute()
+        .eq('item_id', item_id)
+        .execute()
     )
-    return response.data
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return response.data[0]
+
+
+@app.get("/lookup", response_model=None, status_code=200)
+async def lookup(text: str, user_id: str = Depends(get_current_user_id)):
+    items = (
+        supabase
+        .table('items')
+        .select('item_id', 'summary')
+        .eq('user_id', user_id)
+        .execute()
+    )
+    matching_id = await matching(text, items.data)
+    if matching_id is None:
+        raise HTTPException(status_code=404, detail="No item found")
+    result = (
+        supabase
+        .table('items')
+        .select('*')
+        .eq('item_id', matching_id)
+        .execute()
+    )
+    return result.data
 
 
 @app.post("/upload", response_model=None, status_code=201)
@@ -63,6 +86,12 @@ async def upload(
     file_path = f"{user_id}/{int(time.time())}-{file.filename}"
     file_content = await file.read()
     try:
+        text = file_content.decode("utf-8")
+        summary = await summarize(text)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Summarization failed: {e}")
+    try:
         supabase.storage.from_(supabase_bucket).upload(
             path=file_path,
             file=file_content,
@@ -70,27 +99,29 @@ async def upload(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
-    file_link = f"{
-        supabase_url}/storage/v1/object/public/{supabase_bucket}/{file_path}"
-    try:
-        text = file_content.decode("utf-8")
-        summary = await summarize(text)
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Summarization failed: {e}")
-    supabase.table("items").insert({
+    file_link = f"{supabase_url}/storage/v1/object/public/{supabase_bucket}/{file_path}"
+    row = {
         "user_id": user_id,
+        "summary": summary,
         "link": file_link,
-        "summary": summary
-    }).execute()
+    }
+    supabase.table("items").insert(row).execute()
+    return row
 
 
-@app.delete("/files/{file_id}", status_code=200)
+@app.delete("/delete/{item_id}", status_code=200)
 async def delete_file(
-    item_id: str,
+    item_id: int,
     user_id: str = Depends(get_current_user_id)
 ):
-    result = supabase.table("items").select("*").eq("item_id", item_id).eq("user_id", user_id).execute()
+    result = (
+        supabase
+        .table('items')
+        .select('*')
+        .eq('item_id', item_id)
+        .eq('user_id', user_id)
+        .execute()
+    )
     if not result.data:
         raise HTTPException(status_code=404, detail="File not found")
     row = result.data[0]
@@ -102,10 +133,8 @@ async def delete_file(
             status_code=500,
             detail=f"Storage deletion failed: {e}"
         )
-
-    delete_result = supabase.table("items").delete().eq("id", item_id).eq("user_id", user_id).execute()
-
+    delete_result = supabase.table("items").delete().eq(
+        "item_id", item_id).eq("user_id", user_id).execute()
     if not delete_result.data:
         raise HTTPException(status_code=500, detail="Database deletion failed")
-
     return {"status": "deleted", "id": item_id}
