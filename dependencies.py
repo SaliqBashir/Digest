@@ -5,6 +5,7 @@ from fastapi import Header, HTTPException
 from dotenv import load_dotenv
 import httpx
 import re
+import functools
 
 load_dotenv()
 
@@ -12,6 +13,21 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 JWKS_URL = f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json"
 
 jwk_client = PyJWKClient(JWKS_URL)
+
+
+def requires_ollama(func):
+    @functools.wraps(func)
+    async def wrapper(*args, **kwargs):
+        try:
+            is_running = httpx.get(
+                "http://localhost:11434/api/tags", timeout=2
+            ).status_code == 200
+        except httpx.ConnectError:
+            is_running = False
+        if not is_running:
+            raise HTTPException(status_code=503, detail="Model is unavailable")
+        return await func(*args, **kwargs)
+    return wrapper
 
 
 def get_current_user_id(authorization: str = Header(...)) -> str:
@@ -36,6 +52,7 @@ def get_current_user_id(authorization: str = Header(...)) -> str:
     return payload["sub"]
 
 
+@requires_ollama
 async def summarize(text: str):
     async with httpx.AsyncClient(timeout=120) as client:
         resp = await client.post(
@@ -50,6 +67,7 @@ async def summarize(text: str):
         return resp.json()["response"]
 
 
+@requires_ollama
 async def matching(text: str, items: list[dict]) -> int | None:
     if not items:
         return None

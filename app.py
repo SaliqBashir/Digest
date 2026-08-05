@@ -26,6 +26,10 @@ supabase_bucket = os.getenv("SUPABASE_BUCKET")
 supabase: Client = create_client(supabase_url, supabase_key)
 app.include_router(auth.router)
 
+if not all([supabase_bucket, supabase_key, supabase_url]):
+    raise EnvironmentError(
+        "One or more Supabase environmental variables missing.")
+
 
 @app.get("/search", response_model=list[Item], status_code=200)
 def get_items(user_id: str = Depends(get_current_user_id)):
@@ -99,7 +103,8 @@ async def upload(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Upload failed: {e}")
-    file_link = f"{supabase_url}/storage/v1/object/public/{supabase_bucket}/{file_path}"
+    file_link = f"{
+        supabase_url}/storage/v1/object/public/{supabase_bucket}/{file_path}"
     row = {
         "user_id": user_id,
         "summary": summary,
