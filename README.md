@@ -35,7 +35,7 @@ Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM v
 
 ## Overview
 
-Most file storage is dumb — it knows a filename, a size, and an upload date, and nothing about what's actually inside the file. Digest changes that. Every file you upload is read by a local LLM, summarized, and stored alongside its content, so retrieval isn't limited to exact filename matches — it's driven by understanding.
+Most file storage is dumb it knows a filename, a size, and an upload date, and nothing about what's actually inside the file. Digest changes that. Every file you upload is read by a local LLM, summarized, and stored alongside its content, so retrieval isn't limited to exact filename matches it's driven by understanding.
 
 Every user's files are fully isolated. Auth, storage, and data access are all scoped per-user using Supabase Auth and enforced ownership checks on every route, so multi-tenancy is a first-class concern, not an afterthought.
 
@@ -204,8 +204,8 @@ cp .env.example .env
 | Variable | Description |
 |---|---|
 | `SUPABASE_URL` | Your Supabase project URL (e.g. `https://xxxx.supabase.co`) |
-| `SUPABASE_JWT_KEY` | Public anon key — used for user-facing auth actions (signup/login) |
-| `SUPABASE_SECRET_KEY` | Service role key — used for backend data/storage operations. **Never expose this client-side.** |
+| `SUPABASE_JWT_KEY` | JWL auth key - used for user-facing auth actions (signup/login) |
+| `SUPABASE_SECRET_KEY` | Service role key - used for backend data/storage operations. **Never expose this client-side.** |
 | `SUPABASE_BUCKET` | Name of the Supabase Storage bucket used for file uploads |
 
 All four keys are available in your Supabase dashboard under **Settings → API**.
