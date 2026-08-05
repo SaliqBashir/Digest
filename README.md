@@ -2,9 +2,9 @@
 
 **A smart cloud file system with AI built in.**
 
-Digest is a multi-user file intelligence backend. Upload a document, and it's automatically summarized, indexed, and made searchable — not just by filename, but by *meaning*. Ask for "the budget report from last week" and Digest finds it, even if you never named it that.
+Digest is a multi-user file intelligence backend. Upload a document, and it's automatically summarized, indexed, and made searchable not just by filename, but by *meaning*. Ask for "the budget report from last week" and Digest finds it, even if you never named it that.
 
-Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM via Ollama — no data ever leaves your infrastructure for AI processing.
+Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM via Ollama no data ever leaves your infrastructure for AI processing.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
