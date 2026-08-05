@@ -204,7 +204,7 @@ cp .env.example .env
 | Variable | Description |
 |---|---|
 | `SUPABASE_URL` | Your Supabase project URL (e.g. `https://xxxx.supabase.co`) |
-| `SUPABASE_JWT_KEY` | JWL auth key - used for user-facing auth actions (signup/login) |
+| `SUPABASE_JWT_KEY` | JWT auth key - used for user-facing auth actions (signup/login) |
 | `SUPABASE_SECRET_KEY` | Service role key - used for backend data/storage operations. **Never expose this client-side.** |
 | `SUPABASE_BUCKET` | Name of the Supabase Storage bucket used for file uploads |
 
