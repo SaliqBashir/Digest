@@ -2,9 +2,9 @@
 
 **A smart cloud file system with AI built in.**
 
-Digest is a multi-user file intelligence backend. Upload a document, and it's automatically summarized, indexed, and made searchable — not just by filename, but by *meaning*. Ask for "the budget report from last week" and Digest finds it, even if you never named it that.
+Digest is a multi-user file intelligence backend. Upload a document, and it's automatically summarized, indexed, and made searchable not just by filename, but by *meaning*. Ask for "the budget report from last week" and Digest finds it, even if you never named it that.
 
-Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM via Ollama — no data ever leaves your infrastructure for AI processing.
+Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM via Ollama no data ever leaves your infrastructure for AI processing.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -35,7 +35,7 @@ Built on FastAPI, Supabase (Auth, Postgres, Storage), and a locally-hosted LLM v
 
 ## Overview
 
-Most file storage is dumb — it knows a filename, a size, and an upload date, and nothing about what's actually inside the file. Digest changes that. Every file you upload is read by a local LLM, summarized, and stored alongside its content, so retrieval isn't limited to exact filename matches — it's driven by understanding.
+Most file storage is dumb it knows a filename, a size, and an upload date, and nothing about what's actually inside the file. Digest changes that. Every file you upload is read by a local LLM, summarized, and stored alongside its content, so retrieval isn't limited to exact filename matches it's driven by understanding.
 
 Every user's files are fully isolated. Auth, storage, and data access are all scoped per-user using Supabase Auth and enforced ownership checks on every route, so multi-tenancy is a first-class concern, not an afterthought.
 
@@ -204,8 +204,8 @@ cp .env.example .env
 | Variable | Description |
 |---|---|
 | `SUPABASE_URL` | Your Supabase project URL (e.g. `https://xxxx.supabase.co`) |
-| `SUPABASE_JWT_KEY` | Public anon key — used for user-facing auth actions (signup/login) |
-| `SUPABASE_SECRET_KEY` | Service role key — used for backend data/storage operations. **Never expose this client-side.** |
+| `SUPABASE_JWT_KEY` | JWT auth key - used for user-facing auth actions (signup/login) |
+| `SUPABASE_SECRET_KEY` | Service role key - used for backend data/storage operations. **Never expose this client-side.** |
 | `SUPABASE_BUCKET` | Name of the Supabase Storage bucket used for file uploads |
 
 All four keys are available in your Supabase dashboard under **Settings → API**.
