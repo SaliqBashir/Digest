@@ -75,6 +75,7 @@ async def lookup(text: str, user_id: str = Depends(get_current_user_id)):
         .table('items')
         .select('*')
         .eq('item_id', matching_id)
+        .eq('user_id', user_id)
         .execute()
     )
     return result.data

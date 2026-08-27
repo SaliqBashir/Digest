@@ -1,4 +1,45 @@
+# ── OS ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Environment / secrets ──────────────────────────
 .env
-__pycache__/
-venv/
-*.db 
+.env.*
+!.env.example
+!backend/.env.example
+
+# ── Python (backend) ───────────────────────────────
+backend/__pycache__/
+backend/**/__pycache__/
+*.py[cod]
+*$py.class
+backend/.venv/
+backend/venv/
+backend/env/
+backend/*.egg-info/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/htmlcov/
+backend/.coverage
+
+# ── Node / Vite (frontend) ─────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+frontend/*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Editors ─────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# ── Misc ────────────────────────────────────────────
+*.log
+.DS_Store
