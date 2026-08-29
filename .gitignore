@@ -42,4 +42,4 @@ pnpm-debug.log*
 
 # ── Misc ────────────────────────────────────────────
 *.log
-.DS_Store
+.DS_Storj
