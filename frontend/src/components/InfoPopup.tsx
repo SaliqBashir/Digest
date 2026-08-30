@@ -22,7 +22,6 @@ function FileModal({ file, onClose }: FileModalProps) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              boxShadow: "2px 2px 0px 0px #000000"
             }}
           >
             X
@@ -39,7 +38,6 @@ function FileModal({ file, onClose }: FileModalProps) {
             style={{
               padding: "0.25rem 0.5rem",
               textTransform: "uppercase",
-              boxShadow: "2px 2px 0px 0px #000000"
             }}
           >
             Copy Link
@@ -52,7 +50,6 @@ function FileModal({ file, onClose }: FileModalProps) {
             style={{
               padding: "0.25rem 0.5rem",
               textTransform: "uppercase",
-              boxShadow: "2px 2px 0px 0px #000000"
             }}
           >
             Delete

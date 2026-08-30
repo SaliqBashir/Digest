@@ -3,8 +3,9 @@ import Button from "./Button";
 interface Props {
   name: string;
   button: string;
+  onButtonClick: () => void;
 }
-function NavBar({ name, button }: Props) {
+function NavBar({ name, button, onButtonClick}: Props) {
   return (
     <>
       <nav className="navbar">
@@ -20,7 +21,7 @@ function NavBar({ name, button }: Props) {
           />
           <h1 className="navbar-heading">{name}</h1>
         </div>
-        <Button onClick={() => console.log("test")}>{button}</Button>
+        <Button onClick={onButtonClick}>{button}</Button>
       </nav>
     </>
   );

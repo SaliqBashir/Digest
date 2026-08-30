@@ -200,3 +200,55 @@ body {
 .popup-row-right {
   justify-content: flex-end;
 }
+/* --- Upload View --- */
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2rem;
+  max-width: 800px;
+  margin: 3rem auto; /* Centers the box on the screen */
+}
+
+.upload-dropzone {
+  border: var(--border-thick);
+  background-color: var(--bg-secondary);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  transition: var(--transition-fast);
+}
+
+.upload-dropzone:hover {
+  background-color: #cccccc; /* slight hover interaction */
+}
+
+.dropzone-text {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.dropzone-subtext {
+  font-size: 0.75rem;
+  color: #888888;
+}
+
+.upload-action-area {
+  border: var(--border-thick);
+  background-color: var(--bg-secondary);
+  height: 300px; /* keep it the same height as the dropzone */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
