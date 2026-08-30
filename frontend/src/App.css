@@ -2,8 +2,8 @@
   --font-mono: 'Space Mono';
   --font-sans: 'Space Grotesk';
   --bg-primary: #f1f1f1;
-  --border-color: #000000;
   --bg-secondary: #d9d9d9;
+  --border-color: #000000;
   --border-thick: 2px solid var(--border-color);
   --text-primary: #000000;
   --shadow-void: 4px 4px 0px #000000;
