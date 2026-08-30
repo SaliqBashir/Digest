@@ -1,3 +1,5 @@
+import Button from "./Button";
+
 interface FileModalProps {
   file: any;
   onClose: () => void;
@@ -11,7 +13,20 @@ function FileModal({ file, onClose }: FileModalProps) {
         onClick={(e) => e.stopPropagation()} 
       >
         <div className="popup-header">
-          <button className="btn-close" onClick={onClose}>X</button>
+          <Button 
+            onClick={onClose}
+            style={{
+              width: "1.5rem",
+              height: "1.5rem",
+              padding: 0,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "2px 2px 0px 0px #000000"
+            }}
+          >
+            X
+          </Button>
         </div>
         
         <div className="popup-row">
@@ -19,15 +34,29 @@ function FileModal({ file, onClose }: FileModalProps) {
         </div>
         
         <div className="popup-row popup-row-right">
-          <button className="btn-mini" onClick={() => alert("Link Copied!")}>
+          <Button 
+            onClick={() => alert("Link Copied!")}
+            style={{
+              padding: "0.25rem 0.5rem",
+              textTransform: "uppercase",
+              boxShadow: "2px 2px 0px 0px #000000"
+            }}
+          >
             Copy Link
-          </button>
+          </Button>
         </div>
         
         <div className="popup-row">
-          <button className="btn-mini" onClick={() => alert("File Deleted!")}>
+          <Button 
+            onClick={() => alert("File Deleted!")}
+            style={{
+              padding: "0.25rem 0.5rem",
+              textTransform: "uppercase",
+              boxShadow: "2px 2px 0px 0px #000000"
+            }}
+          >
             Delete
-          </button>
+          </Button>
         </div>
       </div>
     </div>
