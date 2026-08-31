@@ -4,6 +4,22 @@ import InfoPopup from "./InfoPopup";
 function DataGrid() {
     const [selectedFile, setSelectedFile] = useState<any | null>(null);
     const mockFiles = [
+          { id: "file_123", url: "" },
+        { id: "file_456", url: "" },
+            { id: "file_123", url: "" },
+        { id: "file_456", url: "" },
+        { id: "file_789", url: "" },
+        { id: "file_012", url: "" },
+        { id: "file_123", url: "" },
+        { id: "file_456", url: "" },
+        { id: "file_789", url: "" },
+        { id: "file_012", url: "" },
+      { id: "file_789", url: "" },
+        { id: "file_012", url: "" },
+        { id: "file_123", url: "" },
+        { id: "file_456", url: "" },
+        { id: "file_789", url: "" },
+        { id: "file_012", url: "" },
         { id: "file_123", url: "" },
         { id: "file_456", url: "" },
         { id: "file_789", url: "" },

@@ -1,39 +1,19 @@
 import Button from "./Button";
-
-function Input() {
+interface Props{
+  placeholder: string;
+}
+function Input({ placeholder}: Props) {
   return (
-    <div
-      className="input-void"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        padding: "0.75rem 0.75rem 0.75rem 1.5rem", 
-        maxWidth: "800px",
-        margin: "3rem auto",
-      }}
-    >
+    <div className="input-void search-bar-container">
       <input
         type="text"
-        placeholder="Search"
-        style={{
-          border: "none",
-          outline: "none",
-          background: "transparent",
-          fontFamily: "inherit",
-          fontSize: "1.2rem",
-          color: "inherit",
-          flexGrow: 1,
-          width: "100%",
-        }}
+        placeholder={placeholder}
+        className="search-bar-input"
       />
       
       <Button
         onClick={() => console.log("test")}
-        style={{
-          padding: "0.4rem 1.2rem",
-          fontSize: "0.9rem",
-          flexShrink: 0,
-        }}
+        className="btn-search"
       >
         Mode
       </Button>

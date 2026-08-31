@@ -4,10 +4,11 @@ interface Props {
   children: ReactNode;
   onClick: () => void;
   style?: CSSProperties;
+  className?: string;
 }
-function Button({ children, onClick, style}: Props) {
+function Button({ children, onClick, style, className }: Props) {
   return (
-    <button className="btn-void" onClick={onClick} style={style}>
+    <button className={`btn-void ${className || ""}`.trim()} onClick={onClick} style={style}>
       {children}
     </button>
   );

@@ -9,15 +9,11 @@ function NavBar({ name, button, onButtonClick}: Props) {
   return (
     <>
       <nav className="navbar">
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="navbar-left">
           <img
             src={logo}
             alt="Digest Logo"
-            style={{
-              width: "50px",
-              height: "50px",
-              objectFit: "contain",
-            }}
+            className="navbar-logo"
           />
           <h1 className="navbar-heading">{name}</h1>
         </div>

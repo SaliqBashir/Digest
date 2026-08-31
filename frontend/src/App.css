@@ -200,13 +200,15 @@ body {
 .popup-row-right {
   justify-content: flex-end;
 }
+
 /* --- Upload View --- */
 .upload-container {
   display: flex;
   flex-direction: column;
   padding: 0 2rem;
   max-width: 800px;
-  margin: 3rem auto; /* Centers the box on the screen */
+  margin: 3rem auto;
+  /* Centers the box on the screen */
 }
 
 .upload-dropzone {
@@ -223,7 +225,8 @@ body {
 }
 
 .upload-dropzone:hover {
-  background-color: #cccccc; /* slight hover interaction */
+  background-color: #cccccc;
+  /* slight hover interaction */
 }
 
 .dropzone-text {
@@ -240,7 +243,8 @@ body {
 .upload-action-area {
   border: var(--border-thick);
   background-color: var(--bg-secondary);
-  height: 300px; /* keep it the same height as the dropzone */
+  height: 300px;
+  /* keep it the same height as the dropzone */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -251,4 +255,114 @@ body {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+/* --- Utility / Component Classes --- */
+.btn-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-icon-large {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.btn-small {
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+}
+
+.btn-upload {
+  margin-top: 2rem;
+  width: 120px;
+}
+
+.btn-search {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0.75rem 0.75rem 1.5rem;
+  max-width: 800px;
+  margin: 3rem auto;
+}
+
+.search-bar-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1.2rem;
+  color: inherit;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.file-input-display {
+  color: #888888;
+  width: 300px;
+  padding-right: 3rem;
+}
+
+.upload-cross-wrapper {
+  position: absolute;
+  right: 1rem;
+  top: 45%;
+  transform: translateY(-50%);
+}
+
+.btn-logout {
+  display: block;
+  margin: 0 2rem 2rem auto;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 15vh;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 500px;
+  max-width: 90%;
+}
+
+.auth-input {
+  background-color: var(--bg-secondary) !important;
+  font-family: var(--font-mono) !important;
 }

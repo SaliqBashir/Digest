@@ -15,18 +15,7 @@ function FileCard({ file, onInfoClick }: Props) {
             }
             <Button 
                 onClick={onInfoClick}
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    width: "2rem",
-                    height: "2rem",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 2
-                }}
+                className="btn-icon-large"
             >
                 I
             </Button>

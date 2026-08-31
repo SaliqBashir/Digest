@@ -15,14 +15,7 @@ function FileModal({ file, onClose }: FileModalProps) {
         <div className="popup-header">
           <Button 
             onClick={onClose}
-            style={{
-              width: "1.5rem",
-              height: "1.5rem",
-              padding: 0,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+            className="btn-icon"
           >
             X
           </Button>
@@ -35,10 +28,7 @@ function FileModal({ file, onClose }: FileModalProps) {
         <div className="popup-row popup-row-right">
           <Button 
             onClick={() => alert("Link Copied!")}
-            style={{
-              padding: "0.25rem 0.5rem",
-              textTransform: "uppercase",
-            }}
+            className="btn-small"
           >
             Copy Link
           </Button>
@@ -47,10 +37,7 @@ function FileModal({ file, onClose }: FileModalProps) {
         <div className="popup-row">
           <Button 
             onClick={() => alert("File Deleted!")}
-            style={{
-              padding: "0.25rem 0.5rem",
-              textTransform: "uppercase",
-            }}
+            className="btn-small"
           >
             Delete
           </Button>
