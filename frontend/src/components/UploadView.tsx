@@ -74,7 +74,7 @@ export default function UploadView() {
       setToastMessage("File uploaded successfully!");
       setShowToast(true);
       setToastKey(prev => prev + 1);
-      setSelectedFile(null); // Reset after successful upload
+      setSelectedFile(null);
     } catch (err: any) {
       const backendError = err.response?.data?.detail;
       const errorStr = typeof backendError === "string" ? backendError : 

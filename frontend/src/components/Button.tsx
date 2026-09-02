@@ -2,7 +2,7 @@ import type { ReactNode, CSSProperties } from "react";
 
 interface Props {
   children: ReactNode;
-  onClick: () => void;
+  onClick: (e: any) => void;
   style?: CSSProperties;
   className?: string;
 }

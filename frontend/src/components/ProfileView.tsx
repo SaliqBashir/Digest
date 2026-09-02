@@ -39,7 +39,7 @@ export default function ProfileView() {
       setToastMessage("Password updated successfully");
       setShowToast(true);
       setToastKey(prev => prev + 1);
-      setPassword(""); // Clear the field after success
+      setPassword("");
     } catch (err: any) {
       const backendError = err.response?.data?.detail;
       setToastMessage(backendError || "Failed to update password");
