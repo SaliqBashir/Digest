@@ -1,11 +1,17 @@
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 import os
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from supabase import Client, create_client
 from pydantic import BaseModel, AwareDatetime
 from routers import auth
 from dependencies import get_current_user_id, summarize, matching
 import time
+
+
+origins = [
+    "http://localhost:5173",
+]
 
 
 class Item(BaseModel):
@@ -18,7 +24,13 @@ class Item(BaseModel):
 
 load_dotenv()
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_SECRET_KEY")
 supabase_bucket = os.getenv("SUPABASE_BUCKET")

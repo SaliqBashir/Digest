@@ -1,0 +1,18 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Neo-brutalist generic file icon: hard offset shadow, thick black stroke, flat gray fill -->
+
+  <!-- Offset hard shadow (no blur, brutalist style) -->
+  <path d="M58 20 H128 L158 50 V180 H58 Z" fill="#000000"/>
+
+  <!-- Main file body, offset from shadow -->
+  <path d="M50 12 H120 L150 42 V172 H50 Z" fill="#E8E8E8" stroke="#000000" stroke-width="4" stroke-linejoin="miter"/>
+
+  <!-- Folded corner -->
+  <path d="M120 12 L150 42 H120 Z" fill="#B8B8B8" stroke="#000000" stroke-width="4" stroke-linejoin="miter"/>
+
+  <!-- Text lines (represents document content) -->
+  <rect x="66" y="82" width="68" height="8" fill="#000000"/>
+  <rect x="66" y="102" width="68" height="8" fill="#000000"/>
+  <rect x="66" y="122" width="68" height="8" fill="#000000"/>
+  <rect x="66" y="142" width="40" height="8" fill="#000000"/>
+</svg>

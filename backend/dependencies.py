@@ -59,7 +59,7 @@ async def summarize(text: str):
             "http://localhost:11434/api/generate",
             json={
                 "model": "qwen2.5:7b",
-                "prompt": f"Summarize the following document in 20 words:\n\n{text}",
+                "prompt": f"Instruction: Write a concise summary of the following text in 20 words or less. DO NOT output the original text. ONLY output the short summary.\n\nText to summarize:\n{text}\n\nSummary:",
                 "stream": False
             }
         )

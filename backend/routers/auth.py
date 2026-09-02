@@ -1,8 +1,10 @@
 import os
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, Header
 from pydantic import BaseModel
+import httpx
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from dependencies import get_current_user_id
 
 load_dotenv()
 
@@ -42,6 +44,25 @@ def login(creds: Credentials):
             "access_token": result.session.access_token,
             "refresh_token": result.session.refresh_token,
             "user_id": result.user.id,
+            "email": result.user.email,
         }
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Invalid credentials: {e}")
+
+
+class UpdatePasswordRequest(BaseModel):
+    new_password: str
+
+
+@router.put("/password")
+async def update_password(req: UpdatePasswordRequest, authorization: str = Header(...)):
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(
+            f"{SUPABASE_URL}/auth/v1/user",
+            headers={"Authorization": authorization, "apikey": SUPABASE_SECRET_KEY},
+            json={"password": req.new_password}
+        )
+        if resp.status_code >= 400:
+            error_msg = resp.json().get("msg", resp.text) if "application/json" in resp.headers.get("Content-Type", "") else resp.text
+            raise HTTPException(status_code=400, detail=f"Failed to update password: {error_msg}")
+        return {"detail": "Password updated successfully"}
