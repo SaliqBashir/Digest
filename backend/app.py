@@ -5,6 +5,7 @@ from urllib.parse import urlparse, unquote
 
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
 from supabase import Client, create_client
 from pydantic import BaseModel, AwareDatetime
@@ -221,6 +222,11 @@ def _extract_storage_path(link: str, bucket: str) -> str | None:
 @app.get("/health", status_code=200)
 def health():
     return {"status": "ok"}
+
+
+@app.get("/ping", response_class=PlainTextResponse, status_code=200)
+def ping():
+    return "OK"
 
 
 @app.get("/search", response_model=list[Item], status_code=200)

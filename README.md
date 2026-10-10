@@ -292,6 +292,7 @@ All routes except `/auth/signup` and `/auth/login` require an `Authorization: Be
 | Method | Endpoint | Description |
 |---|---|---|
 | `GET` | `/health` | Health check |
+| `GET` | `/ping` | Uptime ping, always responds `OK` (for external cron/pingers) |
 | `GET` | `/search?limit=50&offset=0` | List items belonging to the authenticated user (paginated, newest first) |
 | `GET` | `/search/{item_id}` | Fetch a single item by ID (must be owned by the requesting user) |
 | `GET` | `/lookup?text=...` | Semantic search — finds the item whose summary best matches the query, using Gemini |
