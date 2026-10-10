@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   --font-mono: 'Space Mono';
   --font-sans: 'Space Grotesk';
@@ -664,5 +670,74 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* --- Mobile --- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .navbar-heading {
+    font-size: 1.1rem;
+  }
+
+  .navbar-logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .search-row {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 1.5rem auto;
+  }
+
+  .search-row .search-bar-container,
+  .search-row .controls-box {
+    width: 100%;
+  }
+
+  .controls-box {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .file-grid-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+
+  .file-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .btn-logout {
+    margin: 0 1rem 1rem auto;
+  }
+
+  .upload-container {
+    padding: 0 1rem;
+    margin: 1.5rem auto;
+  }
+
+  .auth-form {
+    width: 100%;
+  }
+
+  .list-grid {
+    grid-template-columns: minmax(0, 1fr) 64px 76px 96px 44px;
+    gap: 0.5rem;
+  }
+
+  .toast-container {
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .toast-box {
+    min-width: 0;
   }
 }
