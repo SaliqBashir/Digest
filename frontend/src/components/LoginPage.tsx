@@ -90,7 +90,7 @@ function LoginPage({ onLogin, mode }: Props) {
 
           <input
             type="password"
-            placeholder="Password (min 6 characters)"
+            placeholder="Password"
             className="input-void auth-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

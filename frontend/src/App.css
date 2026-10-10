@@ -562,6 +562,7 @@ body {
   position: relative;
   display: flex;
   justify-content: flex-end;
+  padding-right: 0.6rem;
 }
 
 .list-cell-actions .list-info-btn {

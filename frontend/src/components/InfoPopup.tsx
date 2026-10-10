@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 import { displayFileName } from "../utils/filename";
-import { formatBytes } from "../utils/format";
+import { formatBytes, formatDate } from "../utils/format";
 
 interface FileModalProps {
   file: any;
@@ -49,6 +49,8 @@ function FileModal({ file, onClose, onDelete }: FileModalProps) {
         <div className="popup-row">Type: {extensionOf(file)}</div>
 
         <div className="popup-row">Size: {formatBytes(file.file_size)}</div>
+
+        <div className="popup-row">Date: {formatDate(file.created_at)}</div>
 
         <div
           className="popup-row"
