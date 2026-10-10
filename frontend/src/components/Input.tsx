@@ -7,7 +7,7 @@ interface Props {
 }
 
 function Input({ placeholder, onSearch }: Props) {
-  const [mode, setMode] = useState<"id" | "lookup">("id");
+  const [mode, setMode] = useState<"id" | "lookup">("lookup");
   const [query, setQuery] = useState("");
 
   const toggleMode = () => {

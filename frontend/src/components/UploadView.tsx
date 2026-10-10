@@ -1,9 +1,56 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Button from "./Button";
+import MarqueeText from "./MarqueeText";
 import { upload } from "../services/api";
 import Toast from "./Toast";
 
-export default function UploadView() {
+const MAX_TEXT_MB = 50;
+const MAX_IMAGE_MB = 10;
+const TEXT_EXTENSIONS = [".txt", ".md", ".markdown", ".text", ".csv", ".json", ".log"];
+const DOCUMENT_EXTENSIONS = [".pdf", ".docx", ".pptx", ".xlsx"];
+const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+const VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm", ".m4v"];
+const AUDIO_EXTENSIONS = [".mp3", ".wav", ".m4a", ".ogg", ".flac", ".aac", ".wma"];
+const UPLOADABLE_HINT =
+  "Uploadable types: docs (.txt, .md, .pdf, .docx, .pptx, .xlsx, .csv, .json, .log) and images (.jpg, .png, .gif, .webp)";
+const ALLOWED_EXTENSIONS = [...TEXT_EXTENSIONS, ...DOCUMENT_EXTENSIONS, ...IMAGE_EXTENSIONS];
+const ACCEPT =
+  ".txt,.md,.markdown,.text,.csv,.json,.log,text/plain,text/markdown,text/csv,application/json,.pdf,.docx,.pptx,.xlsx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp";
+
+interface Props {
+  onUploaded?: () => void;
+}
+
+function isImageFile(file: File): boolean {
+  if (file.type.startsWith("image/")) return true;
+  return IMAGE_EXTENSIONS.some((ext) =>
+    file.name.toLowerCase().endsWith(ext)
+  );
+}
+
+function validateFile(file: File): string | null {
+  if (file.size === 0) return "File is empty";
+  const name = file.name.toLowerCase();
+  const isVideoOrAudio =
+    file.type.startsWith("video/") ||
+    file.type.startsWith("audio/") ||
+    VIDEO_EXTENSIONS.some((ext) => name.endsWith(ext)) ||
+    AUDIO_EXTENSIONS.some((ext) => name.endsWith(ext));
+  if (isVideoOrAudio) {
+    return `Video and audio files aren't supported. ${UPLOADABLE_HINT}`;
+  }
+  const ok = ALLOWED_EXTENSIONS.some((ext) => name.endsWith(ext));
+  if (!ok) {
+    return `Unsupported file type. ${UPLOADABLE_HINT}`;
+  }
+  const limitMb = isImageFile(file) ? MAX_IMAGE_MB : MAX_TEXT_MB;
+  if (file.size > limitMb * 1024 * 1024) {
+    return `File too large. Max ${isImageFile(file) ? "image" : "text"} size is ${limitMb}MB`;
+  }
+  return null;
+}
+
+export default function UploadView({ onUploaded }: Props) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -11,27 +58,22 @@ export default function UploadView() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastKey, setToastKey] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const [scrollAmount, setScrollAmount] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
 
-  useEffect(() => {
-    if (selectedFile && containerRef.current && textRef.current) {
-      const computedStyle = window.getComputedStyle(containerRef.current);
-      const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
-      const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
-      
-      const availableWidth = containerRef.current.clientWidth - paddingLeft - paddingRight;
-      const textWidth = textRef.current.scrollWidth;
-      
-      if (textWidth > availableWidth) {
-        setScrollAmount(textWidth - availableWidth + 24);
-      } else {
-        setScrollAmount(0);
-      }
+  const showMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setToastKey((prev) => prev + 1);
+  };
+
+  const pickFile = (file: File | undefined) => {
+    if (!file) return;
+    const error = validateFile(file);
+    if (error) {
+      showMessage(error);
+      return;
     }
-  }, [selectedFile]);
+    setSelectedFile(file);
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -50,16 +92,17 @@ export default function UploadView() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      setSelectedFile(e.dataTransfer.files[0]);
+      pickFile(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
+      pickFile(e.target.files[0]);
     }
+    // Allow re-selecting the same file after a failed validation.
+    e.target.value = "";
   };
 
   const handleClick = () => {
@@ -67,22 +110,27 @@ export default function UploadView() {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile || isUploading) return;
+    const error = validateFile(selectedFile);
+    if (error) {
+      showMessage(error);
+      return;
+    }
     setIsUploading(true);
     try {
       await upload(selectedFile);
-      setToastMessage("File uploaded successfully!");
-      setShowToast(true);
-      setToastKey(prev => prev + 1);
       setSelectedFile(null);
+      showMessage("File uploaded successfully!");
+      onUploaded?.();
     } catch (err: any) {
       const backendError = err.response?.data?.detail;
-      const errorStr = typeof backendError === "string" ? backendError : 
-                       Array.isArray(backendError) ? backendError[0]?.msg : 
-                       "Failed to upload file";
-      setToastMessage(errorStr);
-      setShowToast(true);
-      setToastKey(prev => prev + 1);
+      const errorStr =
+        typeof backendError === "string"
+          ? backendError
+          : Array.isArray(backendError)
+            ? backendError[0]?.msg
+            : "Failed to upload file";
+      showMessage(errorStr ?? "Failed to upload file");
     } finally {
       setIsUploading(false);
     }
@@ -98,79 +146,76 @@ export default function UploadView() {
       <div className="upload-container">
         {isUploading ? (
           <div className="upload-progress-area">
-            <div 
-              style={{ width: '48px', height: '48px', border: '4px solid var(--text-primary)', borderTopColor: 'transparent' }} 
+            <div
+              style={{
+                width: "48px",
+                height: "48px",
+                border: "4px solid var(--text-primary)",
+                borderTopColor: "transparent",
+              }}
               className="upload-spinner"
             ></div>
             <div className="upload-text">UPLOADING...</div>
           </div>
         ) : !selectedFile ? (
-        <div
-          className="upload-dropzone"
-          onClick={handleClick}
-          onDragOver={handleDragOver}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          style={{
-            backgroundColor: isDragging ? "#cccccc" : "var(--bg-secondary)",
-            cursor: "pointer"
-          }}
-        >
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            style={{ display: "none" }}
-          />
-          <div className="dropzone-text">Drag and drop the file</div>
-          <div className="dropzone-subtext">Max size 50MB</div>
-        </div>
-      ) : (
-        <div className="upload-action-area">
-          <div className="file-input-wrapper">
-            <div
-              className="input-void file-input-display"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              style={{ position: "relative", display: "flex", alignItems: "center", cursor: "default" }}
-            >
-              <div 
-                ref={containerRef}
-                style={{ overflow: "hidden", width: "100%" }}
-              >
-                <div
-                ref={textRef}
-                style={{
-                  display: "inline-block",
-                  whiteSpace: "nowrap",
-                  transition: "transform 2.5s linear",
-                  transform: isHovered && scrollAmount > 0 ? `translateX(-${scrollAmount}px)` : "translateX(0px)"
-                }}
-              >
-                File: {selectedFile.name}
-              </div>
-            </div>
-            </div>
-            <div className="upload-cross-wrapper">
-              <Button
-                onClick={() => setSelectedFile(null)}
-                className="btn-icon"
-              >
-                X
-              </Button>
+          <div
+            className="upload-dropzone"
+            onClick={handleClick}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            style={{
+              backgroundColor: isDragging ? "#cccccc" : "var(--bg-secondary)",
+              cursor: "pointer",
+            }}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept={ACCEPT}
+              style={{ display: "none" }}
+            />
+            <div className="dropzone-text">Drag and drop the file</div>
+            <div className="dropzone-subtext">
+              Max Upload Size 50MB
             </div>
           </div>
+        ) : (
+          <div className="upload-action-area">
+            <div className="file-input-wrapper">
+              <div
+                className="input-void file-input-display"
+                style={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "default",
+                }}
+              >
+                <MarqueeText text={`File: ${selectedFile.name}`} />
+              </div>
+              <div className="upload-cross-wrapper">
+                <Button
+                  onClick={() => setSelectedFile(null)}
+                  className="btn-icon"
+                >
+                  X
+                </Button>
+              </div>
+            </div>
 
-          <Button
-            onClick={handleUpload}
-            className="btn-upload"
-          >
-            Upload
-          </Button>
-        </div>
-      )}
-    </div>
+            <Button
+              onClick={handleUpload}
+              className="btn-upload"
+              disabled={isUploading}
+            >
+              Upload
+            </Button>
+          </div>
+        )}
+      </div>
     </>
   );
 }

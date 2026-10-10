@@ -3,6 +3,7 @@ import type { AxiosInstance } from "axios";
 
 const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+  timeout: 30000,
 });
 
 api.interceptors.request.use((config) => {
@@ -13,9 +14,24 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getUser = async (email: string , password: string) => {
-  const response = await api.post("/auth/login", { email, password});
-  return response.data
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const url: string = error.config?.url ?? "";
+    // Login itself 401s on bad credentials; don't log out for that.
+    if (status === 401 && !url.includes("/auth/login")) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("email");
+      window.dispatchEvent(new CustomEvent("auth:expired"));
+    }
+    return Promise.reject(error);
+  }
+);
+
+export const getUser = async (email: string, password: string) => {
+  const response = await api.post("/auth/login", { email, password });
+  return response.data;
 };
 
 export const signUpUser = async (email: string, password: string) => {
@@ -23,16 +39,17 @@ export const signUpUser = async (email: string, password: string) => {
   return response.data;
 };
 
-export const getFiles = async () => {
-  const response = await api.get("/search");
-  return response.data; 
+export const getFiles = async (limit = 50, offset = 0) => {
+  const response = await api.get("/search", { params: { limit, offset } });
+  return response.data;
 };
 
 export const upload = async (file: File) => {
-    const formData = new FormData();
-  formData.append("file", file); 
+  const formData = new FormData();
+  formData.append("file", file);
   const response = await api.post("/upload", formData, {
     headers: { "Content-Type": "multipart/form-data" },
+    timeout: 180000,
   });
   return response.data;
 };
@@ -43,7 +60,10 @@ export const deleteFile = async (itemId: number) => {
 };
 
 export const lookupFiles = async (text: string) => {
-  const response = await api.get('/lookup', { params: { text } });
+  const response = await api.get("/lookup", {
+    params: { text },
+    timeout: 180000,
+  });
   return response.data;
 };
 

@@ -3,16 +3,27 @@ import Button from "./Button";
 import Toast from "./Toast";
 import { updatePassword } from "../services/api";
 
+function decodeJwtPayload(token: string): Record<string, any> | null {
+  try {
+    const segment = token.split(".")[1];
+    if (!segment) return null;
+    // base64url -> base64 for atob
+    const base64 = segment.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+}
+
 export default function ProfileView() {
   const getEmail = () => {
     const saved = localStorage.getItem("email");
     if (saved) return saved;
     const token = localStorage.getItem("token");
     if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.email) return payload.email;
-      } catch (e) {}
+      const payload = decodeJwtPayload(token);
+      if (payload?.email) return payload.email as string;
     }
     return "Unknown Email";
   };
@@ -24,27 +35,35 @@ export default function ProfileView() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastKey, setToastKey] = useState(0);
 
+  const showMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setToastKey((prev) => prev + 1);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!password) {
-      setToastMessage("Password cannot be empty");
-      setShowToast(true);
-      setToastKey(prev => prev + 1);
+      showMessage("Password cannot be empty");
       return;
     }
-    
+    if (password.length < 6) {
+      showMessage("Password must be at least 6 characters");
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updatePassword(password);
-      setToastMessage("Password updated successfully");
-      setShowToast(true);
-      setToastKey(prev => prev + 1);
+      showMessage("Password updated successfully");
       setPassword("");
     } catch (err: any) {
       const backendError = err.response?.data?.detail;
-      setToastMessage(backendError || "Failed to update password");
-      setShowToast(true);
-      setToastKey(prev => prev + 1);
+      showMessage(
+        typeof backendError === "string"
+          ? backendError
+          : "Failed to update password"
+      );
     } finally {
       setIsSaving(false);
     }
@@ -64,8 +83,8 @@ export default function ProfileView() {
             <path d="M 24 100 C 24 64, 96 64, 96 100" />
           </svg>
         </div>
-        
-        <form onSubmit={handleSave} className="auth-form" style={{ gap: '2rem' }}>
+
+        <form onSubmit={handleSave} className="auth-form" style={{ gap: "2rem" }}>
           <input
             type="email"
             className="input-void auth-input"
@@ -76,13 +95,14 @@ export default function ProfileView() {
 
           <input
             type="password"
-            placeholder="New Password"
+            placeholder="New Password (min 6 characters)"
             className="input-void auth-input"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            minLength={6}
           />
 
-          <Button onClick={() => {}} className="btn-upload">
+          <Button type="submit" className="btn-upload" disabled={isSaving}>
             {isSaving ? "Saving..." : "Save"}
           </Button>
         </form>
