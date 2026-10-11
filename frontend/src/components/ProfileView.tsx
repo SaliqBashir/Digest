@@ -78,7 +78,7 @@ export default function ProfileView() {
       )}
       <div className="auth-container">
         <div style={{ marginBottom: "3rem", marginTop: "-2rem" }}>
-          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" stroke="black" strokeWidth="4">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" stroke="currentColor" strokeWidth="4" className="profile-avatar">
             <circle cx="60" cy="40" r="24" />
             <path d="M 24 100 C 24 64, 96 64, 96 100" />
           </svg>
@@ -90,7 +90,7 @@ export default function ProfileView() {
             className="input-void auth-input"
             value={email}
             readOnly
-            style={{ color: "#888", cursor: "not-allowed" }}
+            style={{ color: "var(--text-muted)", cursor: "not-allowed" }}
           />
 
           <input

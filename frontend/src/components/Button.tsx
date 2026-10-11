@@ -1,6 +1,6 @@
-import type { ReactNode, CSSProperties, MouseEvent } from "react";
+import type { ReactNode, CSSProperties, MouseEvent, ButtonHTMLAttributes } from "react";
 
-interface Props {
+interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   children: ReactNode;
   onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
   style?: CSSProperties;
@@ -16,6 +16,7 @@ function Button({
   className,
   type = "button",
   disabled = false,
+  ...rest
 }: Props) {
   return (
     <button
@@ -24,6 +25,7 @@ function Button({
       className={`btn-void ${className || ""}`.trim()}
       onClick={onClick}
       style={style}
+      {...rest}
     >
       {children}
     </button>

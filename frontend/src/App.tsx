@@ -8,6 +8,7 @@ import ProfileView from "./components/ProfileView";
 import SortControl from "./components/SortControl";
 import type { SortBy } from "./components/SortControl";
 import Button from "./components/Button";
+import { useTheme } from "./hooks/useTheme";
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -24,6 +25,7 @@ function isTokenExpired(token: string): boolean {
 }
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
   const [view, setView] = useState<"home" | "upload" | "profile">("home");
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     const token = localStorage.getItem("token");
@@ -72,6 +74,8 @@ function App() {
             onButtonClick={() =>
               setAuthMode(authMode === "login" ? "signup" : "login")
             }
+            theme={theme}
+            onThemeToggle={toggleTheme}
           />
           <LoginPage mode={authMode} onLogin={() => setIsLoggedIn(true)} />
         </>
@@ -85,6 +89,8 @@ function App() {
             }
             showProfile={view !== "profile"}
             onProfileClick={() => setView("profile")}
+            theme={theme}
+            onThemeToggle={toggleTheme}
           />
           {view === "home" ? (
             <>

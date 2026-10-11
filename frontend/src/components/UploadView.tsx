@@ -166,7 +166,7 @@ export default function UploadView({ onUploaded }: Props) {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              backgroundColor: isDragging ? "#cccccc" : "var(--bg-secondary)",
+              backgroundColor: isDragging ? "var(--dropzone-hover)" : "var(--bg-secondary)",
               cursor: "pointer",
             }}
           >
